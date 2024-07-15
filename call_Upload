@@ -1,0 +1,84 @@
+								try {
+
+                  // folderID retrieved from folder call_folder
+									variables.uploadTo 		= 'https://' & {your-transfer-server} & '/api/v1/folders/' & {folderID} & '/files';
+									variables.TempPath		= {absolute-path-to-file};
+		
+									// Load the required classes
+									HttpClient 				= createObject("java", "org.apache.commons.httpclient.HttpClient").init();
+									PostMethod 				= createObject("java", "org.apache.commons.httpclient.methods.PostMethod").init( variables.uploadTo );
+									FilePart 				= createObject("java", "org.apache.commons.httpclient.methods.multipart.FilePart");
+									StringPart 				= createObject("java", "org.apache.commons.httpclient.methods.multipart.StringPart");
+									MultipartRequestEntity 	= createObject("java", "org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity");
+									Part 					= createObject("java", "org.apache.commons.httpclient.methods.multipart.Part");
+									
+									// Set the file to be uploaded
+									fileToUpload = createObject("java", "java.io.File").init( variables.TempPath );
+									
+									filePart = FilePart.init("file", fileToUpload);
+									
+									// Create an ArrayList to hold parts
+									parts = createObject("java", "java.util.ArrayList");
+									
+									// Add file part
+									parts.add(filePart);
+									
+									// Add additional form fields if needed - Id is case-sensitive
+									parts.add(StringPart.init("Id", "{folderID}"));
+									
+									// Convert the ArrayList to a Java array of Part objects
+									partsArray = ArrayNew(1);
+									for (i = 1; i <= parts.size(); i++) {
+									    partsArray[i] = parts.get(i - 1);
+									}
+									
+									// Set the request entity
+									requestEntity = MultipartRequestEntity.init(partsArray, PostMethod.getParams());
+									PostMethod.setRequestEntity(requestEntity);
+									
+									// Add the authorization header
+									authorizationToken = postTokenJSON.access_token;
+									PostMethod.addRequestHeader("Authorization", "Bearer " & authorizationToken);
+	
+									// set response structure
+									UploadResponse = {
+										success: false,
+										statusCode: 0,
+										message: '',
+										data: ''
+									};	
+																
+									try {
+									    
+									    // Execute POST request
+									    statusCode = HttpClient.executeMethod(PostMethod);
+									    
+									    // Check if the request was successful
+									    if (statusCode == 201) {
+									        responseBody 				= PostMethod.getResponseBodyAsString();
+									        UploadResponse.success 		= true;
+									        UploadResponse.statusCode 	= statusCode;
+									        UploadResponse.message 		= "File uploaded successfully.";
+									        UploadResponse.data 		= responseBody;
+									    } else {
+									        UploadResponse.success 		= false;
+									        UploadResponse.statusCode 	= statusCode;
+									        UploadResponse.message 		= "File upload failed.";
+									    }
+									
+									} catch (any e) {
+									    
+									    // Handle any exceptions that occur
+									    UploadResponse.success 			= false;
+									    UploadResponse.statusCode 		= 500;
+									    UploadResponse.message 			= "Exception occurred: " & e.message;
+									
+									} finally {
+									    
+									    // Release the connection
+									    PostMethod.releaseConnection();
+									}
+									
+								} catch (any e) {
+								    writeOutput("Function Error: " & e.message);
+								}

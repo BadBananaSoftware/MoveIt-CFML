@@ -1,28 +1,28 @@
-								try {
-								    
-									// set url for api token call
-								    this.apiURL = 'https://{your-transfer-server}/api/v1/token';
-								
-								    httpResponse = new http();
-								    httpResponse.setMethod("POST");
-								    httpResponse.setUrl(this.apiURL);
-								    
-								    // set header
-								    httpResponse.addParam(type="header", name="accept", value="application/json");
-								    httpResponse.addParam(type="header", name="content-type", value="application/x-www-form-urlencoded");
-								    
-								    // set credentials
-								    httpResponse.addParam(type="formfield", name="grant_type", value="password");
-								    httpResponse.addParam(type="formfield", name="username", value= clientUsername );
-								    httpResponse.addParam(type="formfield", name="password", value= clientPassword );
-								    
-								    postTokenresponse = httpResponse.send().getPrefix();
+		try {
+		    
+			// set url for api token call
+		    this.apiURL = 'https://{your-transfer-server}/api/v1/token';
+		
+		    httpResponse = new http();
+		    httpResponse.setMethod("POST");
+		    httpResponse.setUrl(this.apiURL);
+		    
+		    // set header
+		    httpResponse.addParam(type="header", name="accept", value="application/json");
+		    httpResponse.addParam(type="header", name="content-type", value="application/x-www-form-urlencoded");
+		    
+		    // set credentials
+		    httpResponse.addParam(type="formfield", name="grant_type", value="password");
+		    httpResponse.addParam(type="formfield", name="username", value= clientUsername );
+		    httpResponse.addParam(type="formfield", name="password", value= clientPassword );
+		    
+		    postTokenresponse = httpResponse.send().getPrefix();
+
+			postTokenJSON = deserializeJSON( postTokenresponse.fileContent );
 			
-									postTokenJSON = deserializeJSON( postTokenresponse.fileContent );
-									
-								    // convert token to bearer auth
-									variables.BearerToken = 'Bearer ' & postTokenJSON.access_token;
-																							
-								} catch (any e) {
-								    writeOutput("Token Error: " & e.message);
-								}
+		    // convert token to bearer auth
+			variables.BearerToken = 'Bearer ' & postTokenJSON.access_token;
+																	
+		} catch (any e) {
+		    writeOutput("Token Error: " & e.message);
+		}

@@ -1,0 +1,24 @@
+								try {
+								    
+									// set url for folder listing
+								    this.apiURL = 'https://{your-transfer-server}/api/v1/folders';
+								
+								    httpResponse = new http();
+								    httpResponse.setMethod("POST");
+								    httpResponse.setUrl(this.apiURL);
+								    
+								    // set header
+								    httpResponse.addParam(type="header", name="accept", value="*/*");
+								    httpResponse.addParam(type="header", name="content-type", value="application/json");
+                    // variables.BearerToken retrieved from call_Token
+								    httpResponse.addParam(type="header", name="authorization", value=variables.BearerToken);
+
+								    postFolderresponse = httpResponse.send().getPrefix();
+									writeDump( var=postFolderresponse, expand=true );
+			
+									postFolderList = deserializeJSON( postFolderresponse.fileContent );
+									writeDump( var=postFolderList, expand=true );
+								    																							
+								} catch (any e) {
+								    writeOutput("Token Error: " & e.message);
+								}

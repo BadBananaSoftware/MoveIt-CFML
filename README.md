@@ -1,5 +1,5 @@
 # MoveIt-CFML
-MoveIt-HTTP is a CFML (Lucee and ColdFusion) library for interacting with the Progress MoveIT API for secure file transfer. 
+MoveIt-CFML is a ColdFusion/Lucee library for interacting with the Progress MoveIT API for secure file transfer. 
 
 While written primarily for ColdFusion implementations, this can easily be converted to fit whatever codebase you are working in since this is Java-based.
 
